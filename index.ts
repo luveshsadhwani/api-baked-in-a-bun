@@ -3,7 +3,40 @@ import express from "express";
 const app = express();
 const PORT = 3000;
 
+const currentUser = {
+    name: "Luvesh",
+    level: "Beginner",
+    points: 500,
+};
+
+const books = {
+    1: {
+        id: 1,
+        title: "I Know Why The Caged Bird Sings",
+        author: "Maya Angelou",
+    },
+    2: {
+        id: 2,
+        title: "East of Eden",
+        author: "John Steinbeck",
+    },
+    3: {
+        id: 3,
+        title: "The Sun Also Rises",
+        author: "Ernest Hemingway",
+    },
+    4: {
+        id: 4,
+        title: "Cloudy with a Chance of Meatballs",
+        author: "Judi Barrett",
+    },
+} as Record<string, any>;
+
 app.get("/", (req, res) => {
+    res.send(
+        `Greetings ${currentUser.level} ${currentUser.name}!. You have ${currentUser.points}, keep going with our new books and courses below!`
+    );
+});
 
 app.get("/books", (req, res) => {
     res.send(books);
