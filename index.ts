@@ -1,4 +1,5 @@
 import express from "express";
+import { BookQueryParams, updateBook, createBook } from "./books";
 
 const app = express();
 const PORT = 3000;
@@ -52,30 +53,22 @@ app.get("/books/:id", (req, res) => {
 });
 
 app.post("/books", (req, res) => {
-    const query = req.query;
+    const query: BookQueryParams = req.query;
     if (query.id) {
         res.status(400).send("Invalid input");
     } else if (query.title == undefined || query.author == undefined) {
         res.status(400).send("Invalid input");
     }
 
-    const bookIds = Object.keys(books).map((el) => parseInt(el));
-    bookIds.sort((a, b) => b - a);
-    const latestBookId = bookIds[0];
-    const newBookId = latestBookId + 1;
-
-    const newBook = {
-        id: newBookId,
-        title: query.title,
-        author: query.author,
-    };
-    books[newBookId.toString()] = newBook;
+    const newBook = createBook(books, query);
+    books[newBook.id.toString()] = newBook;
 
     res.send(newBook);
 });
 
 app.put("/books/:id", (req, res) => {
-    const query = req.query;
+    const query: BookQueryParams = req.query;
+    const { title, author } = query;
     if (query.id) {
         delete query.id;
     } else if (query.title == undefined || query.author == undefined) {
@@ -85,11 +78,11 @@ app.put("/books/:id", (req, res) => {
     const bookId = req.params.id;
     const book = books[bookId];
     if (book !== undefined) {
-        books[bookId] = {
-            id: bookId,
-            title: query.title,
-            author: query.author,
-        };
+        const updatedBook = updateBook(bookId, books, {
+            title,
+            author,
+        });
+        res.send(updatedBook);
     } else {
         res.status(404).send("Book not found");
     }
